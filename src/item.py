@@ -13,18 +13,27 @@ class Item:
         :param price: Цена за единицу товара.
         :param quantity: Количество товара в магазине.
         """
-        pass
+        if not isinstance(name, str):
+            raise ValueError('name should be string')
+        if type(price) not in [float, int]:
+            raise ValueError('price should be float or integer')
+        if not isinstance(quantity, int):
+            raise ValueError('quantity should be integer')
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self.total_price = self.price * self.quantity
 
-    def calculate_total_price(self) -> float:
+    def calculate_total_price(self):
         """
         Рассчитывает общую стоимость конкретного товара в магазине.
 
         :return: Общая стоимость товара.
         """
-        pass
+        return self.total_price
 
     def apply_discount(self) -> None:
         """
         Применяет установленную скидку для конкретного товара.
         """
-        pass
+        self.price = self.price * self.pay_rate
