@@ -29,3 +29,37 @@ def test_item_apply_discount(item_example):
     item_example.apply_discount()
     assert item_example.price == 8000
 
+
+def test_item_name_property(item_example):
+    """При обращении к приватному атрибуту извне должен возвращать его значение"""
+    assert item_example.name == "Смартфон"
+
+
+@pytest.mark.parametrize("expected, name", [(ValueError, 10),
+                                            (ValueError, 'panasonictechnics'),
+                                            (ValueError, {'panasonic': 'technics'})])
+def test_item_name_setter_validate_date(item_example, name, expected):
+    with pytest.raises(expected):
+        item_example.name = name
+
+
+def test_item_name_setter(item_example):
+    item_example.name = 'пылесос'
+    assert item_example.name == 'пылесос'
+
+
+def test_item_instantiate_from_csv_validate_data_1(item_example, get_file_oversize_row):
+    with pytest.raises(ValueError):
+        item_example.instantiate_from_csv(get_file_oversize_row)
+
+
+def test_item_instantiate_from_csv_validate_data_2(item_example, get_file_row_with_not_int):
+    assert item_example.instantiate_from_csv(get_file_row_with_not_int) == 'Проверьте содержимое файла:' \
+                                                                           'name — это строка, price — это integer ' \
+                                                                           'или float, а quantity — это integer.\n'
+
+
+@pytest.mark.parametrize("argument, expected", [('5', 5), ('5.0', 5), ('5.5', 5),
+                                                ('dfbdfbdf', 'user_str должен содержать int или float')])
+def test_item_string_to_number(item_example, argument, expected):
+    assert item_example.string_to_number(argument) == expected
