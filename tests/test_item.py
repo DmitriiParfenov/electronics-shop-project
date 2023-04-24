@@ -8,6 +8,12 @@ def item_example():
     return Item("Смартфон", 10000, 20)
 
 
+@pytest.fixture
+def get_list_from_class_object(item_example):
+    list_from_class = str(item_example).split('\n')
+    return list_from_class
+
+
 @pytest.mark.parametrize('expected, name, price, quantity', [(ValueError, 10, 10000, 20),
                                                              (ValueError, "Смартфон", "10000", 20),
                                                              (ValueError, "Смартфон", 10000, "20")])
@@ -63,3 +69,16 @@ def test_item_instantiate_from_csv_validate_data_2(item_example, get_file_row_wi
                                                 ('dfbdfbdf', 'user_str должен содержать int или float')])
 def test_item_string_to_number(item_example, argument, expected):
     assert item_example.string_to_number(argument) == expected
+
+
+def test_item_repr(item_example):
+    assert repr(item_example) == "Item('Смартфон', 10000, 20)"
+
+
+@pytest.mark.parametrize("index, expected", [(0, 'Класс Item:'),
+                                             (1, 'Name = Смартфон'),
+                                             (2, 'price = 10000'),
+                                             (3, 'quantity = 20'),
+                                             (4, 'total_price = 200000')])
+def test_item_str(get_list_from_class_object, index, expected):
+    assert get_list_from_class_object[index] == expected
