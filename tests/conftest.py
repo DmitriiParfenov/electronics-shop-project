@@ -3,6 +3,9 @@ import os.path
 
 import pytest
 
+from src.item import Item
+from src.phone import Phone
+
 PATH = os.path.join('tests', 'test_file.csv')
 
 
@@ -22,3 +25,13 @@ def get_file_row_with_not_int():
         fill.writerow(['name', 'price', 'quantity'])
         fill.writerow(['Очиститель', 20, 'a'])
     return PATH
+
+
+@pytest.fixture
+def item_example():
+    return Item("Смартфон", 10000, 20)
+
+
+@pytest.fixture
+def phone_example():
+    return Phone("iPhone 14", 120_000, 5, 2)
