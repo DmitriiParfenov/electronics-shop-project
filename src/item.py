@@ -1,5 +1,6 @@
 import csv
 import os.path
+from typing import Union
 
 
 class Item:
@@ -9,7 +10,7 @@ class Item:
     pay_rate = 1.0
     all = []
 
-    def __init__(self, name: str, price: float, quantity: int) -> None:
+    def __init__(self, name: str, price: Union[int, float], quantity: int) -> None:
         """
         Создание экземпляра класса item.
 
@@ -19,7 +20,7 @@ class Item:
         """
         if not isinstance(name, str):
             raise ValueError('name should be string')
-        if type(price) not in [float, int]:
+        if type(price) not in {float, int}:
             raise ValueError('price should be float or integer')
         if not isinstance(quantity, int):
             raise ValueError('quantity should be integer')
@@ -29,12 +30,26 @@ class Item:
         self.total_price = self.price * self.quantity
         self.all.append(self)
 
+    def __repr__(self):
+        """Возвращает строку с названием класса и полями при инизиализации экземпляров класса"""
+        return f"{self.__class__.__name__}('{self.__name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        """Возвращает строку с названием класса и полями при инизиализации экземпляров класса в дружественном формате"""
+        result = f'Класс {self.__class__.__name__}:\n'
+        for elem in self.__dict__:
+            if elem == '_Item__name':
+                result += f'Name = {self.name}\n'
+            else:
+                result += f'{elem} = {self.__dict__[elem]}\n'
+        return result
+
     @property
     def name(self):
         return self.__name
 
     @name.setter
-    def name(self, new_name):
+    def name(self, new_name: str):
         if not isinstance(new_name, str):
             raise ValueError('new name should be string')
         elif len(new_name) < 10:
@@ -63,7 +78,7 @@ class Item:
         Eсли в файле не 3 элемента в строке, то возбудит исключение ValueError. Если некорректный путь к файлу,
         то вернет строку с оповещением. При записи данных в экземпляр класса с помощью staticmethod string_to_number()
         автоматически данные преобразуются в правильные типа данных, если в файле содержатся объекты, которые
-        нельзя преобразовать, то метод вернут оповещающую строку.
+        нельзя преобразовать, то метод вернет оповещающую строку.
         """
         way = os.path.join(path)
         try:
@@ -74,7 +89,7 @@ class Item:
                         raise ValueError('проверьте корректность данных в файле')
                     name, price, quantity = row.values()
                     try:
-                        Item(str(name), Item.string_to_number(price), Item.string_to_number(quantity))
+                        cls(str(name), cls.string_to_number(price), cls.string_to_number(quantity))
                     except ValueError:
                         return 'Проверьте содержимое файла:' \
                                'name — это строка, price — это integer или float, а quantity — это integer.\n'
@@ -82,7 +97,7 @@ class Item:
             return f'Файл не найден. Файл с данными должен находиться в scr/'
 
     @staticmethod
-    def string_to_number(user_str):
+    def string_to_number(user_str: str):
         """Преобразует integer и float из string"""
         if user_str.isdigit():
             return int(user_str)
@@ -91,3 +106,9 @@ class Item:
             return int(result)
         except ValueError:
             return 'user_str должен содержать int или float'
+
+    def __add__(self, other):
+        """Складывает количество товаров по полю 'quantity' у экземпляров классов, унаследованных от класса Item"""
+        if not issubclass(other.__class__, self.__class__):
+            raise ValueError("Операция сложения только между экземплярами классов Item и Phone по полю 'quantity'.")
+        return self.quantity + other.quantity
