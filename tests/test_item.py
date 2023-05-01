@@ -9,6 +9,12 @@ def get_list_from_class_object(item_example):
     return list_from_class
 
 
+@pytest.fixture
+def get_list_from_class_object(item_example):
+    list_from_class = str(item_example).split('\n')
+    return list_from_class
+
+
 @pytest.mark.parametrize('expected, name, price, quantity', [(ValueError, 10, 10000, 20),
                                                              (ValueError, "Смартфон", "10000", 20),
                                                              (ValueError, "Смартфон", 10000, "20")])
@@ -89,4 +95,3 @@ def test_item_add_1(item_example, phone_example):
 def test_item_add_2(item_example, expected, number):
     with pytest.raises(expected):
         item_example + number
-
