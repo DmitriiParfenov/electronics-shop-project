@@ -4,8 +4,9 @@ from src.item import Item
 
 
 @pytest.fixture
-def item_example():
-    return Item("Смартфон", 10000, 20)
+def get_list_from_class_object(item_example):
+    list_from_class = str(item_example).split('\n')
+    return list_from_class
 
 
 @pytest.fixture
@@ -82,3 +83,15 @@ def test_item_repr(item_example):
                                              (4, 'total_price = 200000')])
 def test_item_str(get_list_from_class_object, index, expected):
     assert get_list_from_class_object[index] == expected
+
+
+def test_item_add_1(item_example, phone_example):
+    assert item_example + phone_example == 25
+
+
+@pytest.mark.parametrize("expected, number", [(ValueError, 25),
+                                              (ValueError, 0),
+                                              (ValueError, -100)])
+def test_item_add_2(item_example, expected, number):
+    with pytest.raises(expected):
+        item_example + number
