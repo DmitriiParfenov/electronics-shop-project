@@ -23,9 +23,7 @@ class MixinLanguage:
 class Keyboard(Item, MixinLanguage):
     """Возвращает строку с названием класса и полями при инизиализации экземпляров класса, а также текущий язык
      раскладки клавиатуры в дружественном формате"""
+
     def __str__(self):
         return super().__str__() + f'Language = {self.language}'
 
-kb = Keyboard('Dark Project KD87A', 9600, 5)
-print(repr(kb))
-print(kb)
