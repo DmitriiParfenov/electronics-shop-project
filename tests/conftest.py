@@ -5,6 +5,7 @@ import pytest
 
 from src.item import Item
 from src.phone import Phone
+from src.keyboard import Keyboard
 
 PATH = os.path.join('tests', 'test_file.csv')
 
@@ -35,3 +36,8 @@ def item_example():
 @pytest.fixture
 def phone_example():
     return Phone("iPhone 14", 120_000, 5, 2)
+
+
+@pytest.fixture
+def keyboard_example():
+    return Keyboard('Dark Project KD87A', 9600, 5)
