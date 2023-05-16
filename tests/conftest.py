@@ -7,7 +7,7 @@ from src.item import Item
 from src.phone import Phone
 from src.keyboard import Keyboard
 
-PATH = os.path.join('tests', 'test_file.csv')
+PATH = os.path.join('../test_file.csv')
 
 
 @pytest.fixture
