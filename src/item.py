@@ -3,6 +3,23 @@ import os.path
 from typing import Union
 
 
+class InstantiateCSVError(Exception):
+    """Класс исключений при повреждении файла формата csv, из которого добавляются элементы при инициализации
+    экземпляра класса Item"""
+    def __init__(self, way: str):
+        """
+        Создание экземпляра класса InstantiateCSVError.
+        :param way: Название файла.
+        При возбуждении исключения будет выводиться сообщение, которое определено в self.message.
+        """
+        self.way = way
+        self.message = f'Файл {self.way} поврежден'
+
+    def __str__(self):
+        """Возвращает строку с оповещением при возбуждении текущего исключения."""
+        return self.message
+
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -80,21 +97,23 @@ class Item:
         автоматически данные преобразуются в правильные типа данных, если в файле содержатся объекты, которые
         нельзя преобразовать, то метод вернет оповещающую строку.
         """
-        way = os.path.join(path)
-        try:
-            with open(way) as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    if len(row) != 3:
-                        raise ValueError('проверьте корректность данных в файле')
-                    name, price, quantity = row.values()
-                    try:
-                        cls(str(name), cls.string_to_number(price), cls.string_to_number(quantity))
-                    except ValueError:
-                        return 'Проверьте содержимое файла:' \
-                               'name — это строка, price — это integer или float, а quantity — это integer.\n'
-        except FileNotFoundError:
-            return f'Файл не найден. Файл с данными должен находиться в scr/'
+
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"Отсутствует файл {path}")
+
+        with open(path) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                if len(row) != 3:
+                    raise InstantiateCSVError(path)
+                if None in row.keys() or None in row.values():
+                    raise InstantiateCSVError(path)
+                name, price, quantity = row.values()
+                try:
+                    cls(str(name), cls.string_to_number(price), cls.string_to_number(quantity))
+                except (ValueError, AttributeError):
+                    return 'Проверьте содержимое файла:' \
+                           'name — это строка, price — это integer или float, а quantity — это integer.\n'
 
     @staticmethod
     def string_to_number(user_str: str):
@@ -112,3 +131,4 @@ class Item:
         if not issubclass(other.__class__, self.__class__):
             raise ValueError("Операция сложения только между экземплярами классов Item и Phone по полю 'quantity'.")
         return self.quantity + other.quantity
+
