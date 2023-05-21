@@ -33,7 +33,7 @@ csv-файла. Данный проект реализован в целях д�
 Выполните в консоли: </br>
 
 ```
-git clone git@github.com:DmitriiParfenov/parser_vacancies.git
+git clone git@github.com:DmitriiParfenov/electronics-shop-project.git
 python -m venv venv
 pip install poetry
 poetry update
